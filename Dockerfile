@@ -1,6 +1,6 @@
 FROM rclone/rclone:latest
 
-RUN apk add --no-cache bash curl coreutils
+RUN apk add --no-cache bash curl coreutils gettext
 
 COPY entrypoint.sh /entrypoint.sh
 COPY rclone-cron.sh /rclone-cron.sh
