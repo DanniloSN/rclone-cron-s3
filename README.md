@@ -4,7 +4,7 @@ This Docker image runs a cron job using `rclone` to sync files from a local fold
 
 ## Features
 
-- Synchronizes files from a specified local folder (`/to-copy`) to an S3 bucket.
+- Synchronizes files from a specified local folder (`/backups`) to an S3 bucket.
 - Configurable cron schedule.
 - AWS authentication via environment variables.
 - No need for `rclone.conf` file.
@@ -18,7 +18,7 @@ This container runs a cron job that performs a sync operation using `rclone` bas
 The cron job runs the following command:
 
 ```bash
-rclone sync /to-copy "s3:${AWS_BUCKET}/${AWS_BUCKET_PATH}" \
+rclone sync /backups "s3:${AWS_BUCKET}/${AWS_BUCKET_PATH}" \
   --s3-provider AWS \
   --s3-region "${AWS_REGION}" \
   --progress \
@@ -43,7 +43,7 @@ To run the container and sync files from a local directory to an S3 bucket, use 
 ```bash
 docker run -d \
   --name rclone-cron \
-  -v /local/path/to/backup:/to-copy:ro \
+  -v /local/path/to/backup:/backups:ro \
   -e CRON_SCHEDULE="*/30 * * * *" \
   -e AWS_ACCESS_KEY_ID=your_key \
   -e AWS_SECRET_ACCESS_KEY=your_secret \
@@ -56,7 +56,7 @@ docker run -d \
 ## This command will
 
 - Run the container in the background (`-d`).
-- Mount the local folder `/local/path/to/backup` to `/to-copy` inside the container (read-only).
+- Mount the local folder `/local/path/to/backup` to `/backups` inside the container (read-only).
 - Set the environment variables for AWS authentication and configuration.
 - Set the cron job to run every 30 minutes (`*/30 * * * *`).
 
