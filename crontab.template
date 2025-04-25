@@ -1,0 +1,1 @@
+${CRON_SCHEDULE} /rclone-cron.sh >> /var/log/cron.log 2>&1
