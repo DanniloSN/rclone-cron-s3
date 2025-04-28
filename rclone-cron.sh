@@ -1,24 +1,37 @@
 #!/bin/bash
 
+set -euo pipefail
+
+mkdir -p "/logs"
+
 BACKUP_DIR="/backups"
+LOG_FILE="/logs/rclone-backup_$(date +%Y-%m-%d-%H-%M-%S).log"
 
-LOG_FOLDER="/logs"
-mkdir -p "$LOG_FOLDER"
+AWS_S3_BUCKET_PATH="${AWS_S3_BUCKET_PATH#/}"
 
-LOG_FOLDER="$LOG_FOLDER/rclone-backup_$(date +%Y-%m-%d-%H-%M-%S).log"
+DESTINATION_DIR=":s3:$AWS_S3_BUCKET"
+if [ -n "$AWS_S3_BUCKET_PATH" ]; then
+  DESTINATION_DIR="$DESTINATION_DIR/$AWS_S3_BUCKET_PATH"
+fi
 
-echo "[INFO] $(date) - Starting sync from $BACKUP_DIR to S3" >> "$LOG_FOLDER"
+echo "[INFO] $(date) - Starting sync from $BACKUP_DIR to $DESTINATION_DIR" >> "$LOG_FILE"
 
-rclone sync $BACKUP_DIR \
-  "s3:$AWS_S3_BUCKET/$AWS_S3_BUCKET_PATH" \
+rclone sync "$BACKUP_DIR" "$DESTINATION_DIR" \
   --s3-provider AWS \
   --s3-env-auth \
-  --s3-region "${AWS_REGION}" \
+  --s3-region "$AWS_REGION" \
   --s3-no-check-bucket \
   --s3-force-path-style \
   --s3-bucket-acl private \
+  --copy-links \
   --progress \
-  --verbose >> "$LOG_FOLDER" 2>&1
+  --verbose >> "$LOG_FILE" 2>&1
 
-echo "[INFO] $(date) - Sync completed" >> "$LOG_FOLDER"
+RESULT=$?
+
+if [ $RESULT -eq 0 ]; then
+  echo "[INFO] $(date) - Sync completed successfully" >> "$LOG_FILE"
+else
+  echo "[ERROR] $(date) - Sync failed with exit code $RESULT" >> "$LOG_FILE"
+fi
 
