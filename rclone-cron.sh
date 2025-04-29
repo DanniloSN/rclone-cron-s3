@@ -23,7 +23,6 @@ rclone sync "$BACKUP_DIR" "$DESTINATION_DIR" \
   --s3-no-check-bucket \
   --s3-force-path-style \
   --s3-bucket-acl private \
-  --copy-links \
   --progress \
   --verbose >> "$LOG_FILE" 2>&1
 
