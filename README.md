@@ -72,7 +72,3 @@ Change the `CRON_SCHEDULE` variable as needed:
 - `*/5 * * * *` → Every 5 minutes
 - `0 0 * * *` → Every day at midnight
 - `0 * * * *` → Every hour
-
-## License
-
-Include the license if applicable (e.g., MIT, Apache 2.0, etc.).
